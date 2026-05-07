@@ -1,0 +1,31 @@
+/* ==========================================
+   全局样式
+   引入 Tailwind 基础样式、组件样式、工具类
+   ========================================== */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* -------- 基础层：全局字体、字号、文字颜色 -------- */
+/* 全局字号：直接覆盖 */
+html {
+  font-size: 20px;
+}
+
+body {
+  font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', sans-serif;
+  color: #0f172a;
+}
+
+/* -------- 自定义滚动条（浅色主题）-------- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #cbd5e1; }
+::-webkit-scrollbar-thumb { background: #64748b; border-radius: 3px; }
+
+/* -------- 打字光标闪烁动画 -------- */
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.typing-cursor::after {
+  content: '|';
+  animation: blink 1s step-end infinite;
+  color: #0284c7;   /* 蓝色光标 */
+}

@@ -1,0 +1,26 @@
+[project]
+name = "paper-agent-pro"
+version = "0.1.0"
+description = "A multi-agent paper research system"
+authors = [
+    {name = "Your Name", email = "you@example.com"}
+]
+requires-python = ">=3.12, <3.14"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn>=0.29.0",
+    "pydantic>=2.0.0",
+    "langgraph>=0.0.30",
+    "sse-starlette>=2.0.0",
+    "httpx (>=0.28.1,<0.29.0)",
+    "openai (>=2.32.0,<3.0.0)",
+    "python-dotenv (>=1.2.2,<2.0.0)",
+    "ollama (>=0.6.2,<0.7.0)"
+]
+
+[tool.poetry]
+package-mode = false
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
