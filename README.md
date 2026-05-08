@@ -1,3 +1,8 @@
+## 📸 效果演示
+
+![demo](demo.gif)
+
+
 # 📡 PaperPilot
 
 > 基于多智能体（Multi-Agent）的 AI 学术论文调研助手
@@ -118,7 +123,7 @@ Vue 3 实时渲染
 ## 1️⃣ 克隆项目
 
 ```bash
-git clone https://github.com/uestc_Lsq/paper-agent.git
+git clone https://github.com/cquestcLsq/paper-agent.git
 
 cd paper-agent
 ```
@@ -238,7 +243,7 @@ http://localhost:3000
 例如：
 
 ```text
-帮我调研近3年关于大语言模型 Agent 的 5 篇论文"
+帮我调研近3年关于大语言模型 Agent 的 5 篇论文
 ```
 
 ---
@@ -322,6 +327,3 @@ output/20260507_153000_xxxx/
 
 ---
 
-# 📜 License
-
-MIT License
