@@ -141,14 +141,18 @@ cp .env.example .env
 编辑 `.env`：
 
 ```env
-OPENAI_API_KEY=sk-xxx
-
+# 大模型配置（示例为 DeepSeek，也可换成 OpenAI 官方或其他兼容接口）
+OPENAI_API_KEY=sk-你的密钥
 OPENAI_BASE_URL=https://api.deepseek.com/v1
-
 MODEL_NAME=deepseek-ai/DeepSeek-V3
 
-OPENALEX_API_KEY=your_openalex_api_key
+# OpenAlex 配置（用于下载 PDF）
+OPENALEX_API_KEY=你的OpenAlex_API_Key
 
+# 注册邮箱（提升搜索频率限制）
+REGISTERED_EMAIL=你的邮箱@example.com
+
+# Ollama 本地翻译模型
 OLLAMA_MODEL=qwen2.5:7b
 ```
 
