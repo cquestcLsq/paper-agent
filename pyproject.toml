@@ -3,7 +3,7 @@ name = "paper-agent-pro"
 version = "0.1.0"
 description = "A multi-agent paper research system"
 authors = [
-    {name = "Your Name", email = "you@example.com"}
+    {name = "cquestcLsq", email = "lsq20020122@gmail.com"}
 ]
 requires-python = ">=3.12, <3.14"
 dependencies = [
