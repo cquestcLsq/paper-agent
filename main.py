@@ -11,7 +11,7 @@ from sse_starlette.sse import EventSourceResponse
 
 from src.agents.orchestrator import PaperAgentOrchestrator
 from src.core.state_models import StateValue, BackToFrontData
-from src.services.db import save_research, get_all_history, get_history_by_id, delete_history
+
 app = FastAPI(title="论文调研助手")
 
 app.add_middleware(
@@ -22,8 +22,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.state.pending_queue = None
-app.state.pending_orchestrator = None
+# 多用户支持：按 session_id 存储状态
+app.state.sessions = {}
+
+
+def _get_session(session_id: str) -> dict:
+    """获取或创建 session"""
+    if session_id not in app.state.sessions:
+        app.state.sessions[session_id] = {
+            "queue": None,
+            "orchestrator": None,
+        }
+    return app.state.sessions[session_id]
 
 
 async def safe_run_graph(coro, queue):
@@ -41,31 +51,13 @@ async def safe_run_graph(coro, queue):
         except:
             pass
 
-@app.get('/api/history')
-async def list_history():
-    """获取历史记录列表"""
-    return get_all_history()
-
-
-@app.get('/api/history/{history_id}')
-async def get_history(history_id: int):
-    """获取单条历史记录详情"""
-    record = get_history_by_id(history_id)
-    if not record:
-        return {"status": "error", "message": "记录不存在"}
-    return record
-
-
-@app.delete('/api/history/{history_id}')
-async def remove_history(history_id: int):
-    """删除一条历史记录"""
-    delete_history(history_id)
-    return {"status": "ok"}
 
 @app.post('/api/confirm_papers')
 async def confirm_papers(request: dict):
     titles = request.get("titles", [])
-    orchestrator = app.state.pending_orchestrator
+    session_id = request.get("session_id", "default")
+    session = _get_session(session_id)
+    orchestrator = session.get("orchestrator")
 
     if not orchestrator or not titles:
         return {"status": "error", "message": "没有可确认的论文"}
@@ -85,9 +77,10 @@ async def confirm_papers(request: dict):
 
 
 @app.get('/api/research/continue')
-async def research_continue(request: Request):
-    state_queue = app.state.pending_queue
-    orchestrator = app.state.pending_orchestrator
+async def research_continue(request: Request, session_id: str = "default"):
+    session = _get_session(session_id)
+    state_queue = session.get("queue")
+    orchestrator = session.get("orchestrator")
 
     async def event_generator():
         try:
@@ -113,7 +106,7 @@ async def research_continue(request: Request):
 
 
 @app.get('/api/research')
-async def research_stream(request: Request, query: str, max_results: int = 5):
+async def research_stream(request: Request, query: str, max_results: int = 5, session_id: str = "default"):
     state_queue = asyncio.Queue()
 
     async def event_generator():
@@ -128,8 +121,6 @@ async def research_stream(request: Request, query: str, max_results: int = 5):
                     continue
                 yield {"data": state_data.model_dump_json()}
                 step_val = state_data.step.value if hasattr(state_data.step, "value") else state_data.step
-                if step_val == "writing" and state_data.state in ["completed", "error"]:
-                    break
                 if step_val == "searching" and state_data.state == "completed":
                     print("⏸️ [SSE] 搜索完成，挂起等待用户确认论文...")
                     break
@@ -139,8 +130,11 @@ async def research_stream(request: Request, query: str, max_results: int = 5):
     event_source = EventSourceResponse(event_generator(), media_type="text/event-stream")
 
     orchestrator = PaperAgentOrchestrator(state_queue=state_queue)
-    app.state.pending_queue = state_queue
-    app.state.pending_orchestrator = orchestrator
+
+    # 存储到当前 session
+    session = _get_session(session_id)
+    session["queue"] = state_queue
+    session["orchestrator"] = orchestrator
 
     asyncio.create_task(safe_run_graph(orchestrator.run(user_request=query, max_results=max_results), state_queue))
     return event_source

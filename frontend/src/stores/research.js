@@ -14,6 +14,9 @@ export const useResearchStore = defineStore('research', () => {
   const isTranslating = ref(false)    // 是否正在接收英文翻译
   const confirmedPapers = ref([])     // 用户勾选的论文标题列表
   const isConfirming = ref(false)     // 是否正在等待人工确认
+  // 生成或获取 session_id（每个标签页唯一）
+  const sessionId = localStorage.getItem("session_id") || crypto.randomUUID()
+  localStorage.setItem("session_id", sessionId)
 
   // -------- 添加一条日志 --------
   function addLog(msg) {
@@ -51,7 +54,7 @@ export const useResearchStore = defineStore('research', () => {
     const response = await fetch('/api/confirm_papers', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ titles: confirmedPapers.value })
+      body: JSON.stringify({ titles: confirmedPapers.value , session_id: sessionId})
     })
     const result = await response.json()
     
@@ -94,7 +97,7 @@ export const useResearchStore = defineStore('research', () => {
     addLog('🚀 正在连接服务器...')
 
     try {
-      const response = await fetch(`/api/research?query=${encodeURIComponent(query)}`)
+      const response = await fetch(`/api/research?query=${encodeURIComponent(query)}&session_id=${sessionId}`)
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
       let buffer = ''
@@ -131,7 +134,7 @@ export const useResearchStore = defineStore('research', () => {
     addLog('✅ 论文已确认，开始下载和分析...')
 
     try {
-      const response = await fetch('/api/research/continue')
+      const response = await fetch(`/api/research/continue?session_id=${sessionId}`)
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
       let buffer = ''
@@ -193,7 +196,6 @@ export const useResearchStore = defineStore('research', () => {
 
   // ===== 论文数据（JSON 字符串）=====
   if (state === 'result' && typeof data === 'string') {
-     console.log('[DEBUG] 收到 result, data 前100字:', data.slice(0, 100))
     try {
       const payload = JSON.parse(data)
       if (payload.type === 'papers' && Array.isArray(payload.papers)) {
