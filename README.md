@@ -1,69 +1,154 @@
-## README.md
+# 📡 PaperPilot
 
-```markdown
-# 📡 PaperPilot —— 基于多智能体的学术论文调研助手
+> 基于多智能体（Multi-Agent）的学术论文调研助手  
+> 输入研究方向，AI 自动完成论文搜索、阅读、分析与中英双语综述生成。
 
-输入研究方向，AI 自动搜索、下载、阅读、分析论文，生成中英双语调研报告。支持人工交互确认、历史记录、多用户并行。
+<p align="center">
+
+![Python](https://img.shields.io/badge/Python-3.12+-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+![Vue](https://img.shields.io/badge/Vue3-42b883)
+![LangGraph](https://img.shields.io/badge/LangGraph-Multi--Agent-orange)
+![License](https://img.shields.io/badge/License-MIT-red)
+
+</p>
+
+---
+
+## ✨ 项目特性
+
+### 🔍 智能论文检索
+
+- 自然语言输入研究方向
+- 自动提取英文关键词
+- OpenAlex 多条件搜索
+- 自动过滤歧义词
+- 优先返回近年高相关论文
+- 支持人工勾选确认待分析论文
+
+### 📖 自动论文阅读
+
+- 自动下载论文 PDF
+- GROBID 提取结构化章节
+- 自动识别摘要、方法、实验、结论
+- 摘要自动翻译为中文
+- 保留原始章节文本
+
+### 🧠 多智能体分析
+
+自动提取：
+
+- 核心研究问题
+- 方法原理
+- 关键实验结果
+- 作者提出的局限性
+- 潜在问题与改进方向
+
+支持：
+
+- 多 Agent 协同工作
+- LangGraph 工作流调度
+- 条件边 + Checkpoint 恢复
+
+### 📝 双语报告生成
+
+- 自动生成中文调研报告
+- Ollama 本地翻译英文版
+- SSE 逐字流式输出
+- 自动脚注引用 `[1][2]`
+- 支持一键复制
+
+### 🗂 系统能力
+
+- SQLite 历史记录持久化
+- 多用户并行会话
+- 调研结果自动归档
+- Vue3 三栏实时界面
+- 不同浏览器/标签页互不干扰
+
+---
 
 ## 📸 效果演示
 
 ![demo](example.gif)
 
-## ✨ 核心功能
+---
 
-- **智能搜索**：自然语言输入，大模型自动提取英文关键词，排除歧义词，优先返回近几年文献
-- **人工确认**：搜索后展示论文列表，用户勾选确认后继续分析
-- **摘要翻译**：Ollama 本地翻译英文摘要为中文
-- **PDF 全文提取**：GROBID 自动识别章节结构，提取摘要、讨论、结论
-- **结构化分析**：提取核心问题、方法原理、主要结果、原文局限性、潜在局限性
-- **双语报告**：中文报告 + Ollama 本地翻译英文，逐字流式推送
-- **脚注引用**：[1][2] 自动对应左侧论文列表
-- **历史记录**：SQLite 持久化，浮窗查看历史报告（不中断当前调研）
-- **多用户支持**：不同标签页/浏览器同时调研，互不干扰
+# 💡 为什么选择 PaperPilot
 
-## 🧩 工作流程
+相比传统 AI 对话工具，PaperPilot 不只是“回答问题”，而是真正完成完整的论文调研流程：
 
+✅ 自动搜索并筛选论文  
+✅ 自动下载与解析 PDF  
+✅ 多论文交叉分析  
+✅ 结构化提取核心内容  
+✅ 自动生成中英双语综述  
+✅ 本地模型翻译，降低 API 成本  
+✅ 支持历史记录与结果归档  
+
+适用于：
+
+- 🎓 研究生文献调研
+- 🤖 AI 论文速读
+- 🧪 企业技术预研
+- 📈 技术趋势分析
+- 📚 技术博客素材整理
+
+---
+
+# 🧩 工作流程
+
+```text
+用户输入研究方向
+        ↓
+大模型提取关键词
+        ↓
+OpenAlex 搜索论文
+        ↓
+用户勾选确认论文
+        ↓
+下载 PDF + GROBID 解析章节
+        ↓
+多 Agent 结构化分析
+        ↓
+生成中文调研报告
+        ↓
+Ollama 本地翻译英文
+        ↓
+SSE 实时流式输出
 ```
-用户输入 → 大模型提取关键词 → OpenAlex 搜索 → Ollama 翻译摘要
-    ↓ 人工确认论文
-GROBID 解析 PDF 章节 → 大模型结构化提取 → 中文报告生成 → Ollama 本地翻译英文
-    ↓ SSE 逐字推送
-Vue 3 前端实时渲染
-```
 
-## 🛠 技术栈
+---
 
-| 层级 | 技术 |
-|:--|:--|
-| 后端框架 | Python / FastAPI |
-| 工作流编排 | LangGraph（条件边 + 条件入口点 + MemorySaver Checkpointer） |
-| 大模型 | OpenAI API（云端分析）+ Ollama / qwen2.5:7b（本地翻译） |
-| 论文搜索 | OpenAlex API |
-| PDF 解析 | GROBID（Docker 部署） |
-| 实时推送 | SSE（sse-starlette） |
-| 前端 | Vue 3 + Vite + Pinia + Tailwind CSS |
-| 历史记录 | SQLite |
-| 多用户 | session_id + app.state.sessions |
+# ⚙️ 技术栈
+
+| 模块 | 技术 |
+|---|---|
+| 后端框架 | FastAPI + Python |
+| 工作流编排 | LangGraph |
+| 大模型 | OpenAI API / DeepSeek |
+| 本地模型 | Ollama（qwen2.5:7b） |
+| 论文搜索 | OpenAlex |
+| PDF 解析 | GROBID |
+| 前端 | Vue3 + Pinia + Tailwind CSS |
+| 实时推送 | SSE |
+| 数据库 | SQLite |
 | 依赖管理 | Poetry |
-| 容器化 | Docker（GROBID） |
 
-## 🚀 快速开始
+---
 
-### 前提
+# 🚀 快速开始
 
-- Python 3.12+
-- Poetry
-- Docker（用于 GROBID）
-- Ollama（用于本地翻译）
-
-### 1. 克隆项目
+## 1. 克隆项目
 
 ```bash
 git clone https://github.com/cquestcLsq/paper-agent.git
 cd paper-agent
 ```
 
-### 2. 配置环境变量
+---
+
+## 2. 配置环境变量
 
 ```bash
 cp .env.example .env
@@ -72,108 +157,148 @@ cp .env.example .env
 编辑 `.env`：
 
 ```env
-# 大模型配置（示例为 DeepSeek，也可换成 OpenAI 官方或其他兼容接口）
-OPENAI_API_KEY=sk-你的密钥
+# 大模型配置
+OPENAI_API_KEY=your_api_key
 OPENAI_BASE_URL=https://api.deepseek.com/v1
 MODEL_NAME=deepseek-ai/DeepSeek-V3
 
-# OpenAlex 配置（用于下载 PDF）
-OPENALEX_API_KEY=你的OpenAlex_API_Key
+# OpenAlex
+OPENALEX_API_KEY=your_openalex_key
+REGISTERED_EMAIL=your_email@example.com
 
-# 注册邮箱（提升搜索频率限制）
-REGISTERED_EMAIL=你的邮箱@example.com
-
-# Ollama 本地翻译模型
+# Ollama
 OLLAMA_MODEL=qwen2.5:7b
 ```
 
-### 3. 安装依赖
+---
+
+## 3. 安装依赖
 
 ```bash
 poetry install
 ```
 
-### 4. 启动 GROBID
+---
+
+## 4. 启动 GROBID
 
 ```bash
-docker run -d -p 8070:8070 --name grobid lfoppiano/grobid:0.8.0
+docker run -d -p 8070:8070 \
+  --name grobid \
+  lfoppiano/grobid:0.8.0
 ```
 
-### 5. 拉取 Ollama 翻译模型
+---
+
+## 5. 拉取 Ollama 模型
 
 ```bash
 ollama pull qwen2.5:7b
 ```
 
-### 6. 启动后端
+---
+
+## 6. 启动后端
 
 ```bash
 poetry run python main.py
 ```
 
-### 7. 启动前端
+---
+
+## 7. 启动前端
 
 ```bash
 cd frontend
+
 npm install
 npx vite
 ```
 
-浏览器打开 `http://localhost:3000`。
+浏览器打开：
 
-## 💡 使用说明
-
-1. 在搜索框输入研究方向，如"帮我搜索5篇近几年关于RAG技术的论文"
-2. 等待搜索完成，论文列表展示在中间栏
-3. 勾选要分析的论文，点"确认选择"
-4. 系统自动下载 PDF、提取章节、分析、撰写报告
-5. 报告逐字流式输出在右侧，支持中英文切换和复制
-6. 点击右上角"历史记录"可查看之前的调研结果
-
-## 📂 项目结构
-
+```text
+http://localhost:3000
 ```
+
+---
+
+# 💡 使用说明
+
+1. 输入研究方向
+
+例如：
+
+```text
+帮我调研近几年关于 RAG 的关键论文
+```
+
+2. 系统自动搜索论文
+
+3. 勾选需要分析的论文
+
+4. 自动下载 PDF 并解析章节
+
+5. 多智能体协同生成调研报告
+
+6. 实时查看中英双语输出
+
+7. 在历史记录中查看过去调研结果
+
+---
+
+# 📂 项目结构
+
+```text
 .
-├── main.py                 # FastAPI 入口 + SSE 接口 + 确认接口 + 历史接口
+├── main.py
 ├── src/
 │   ├── core/
-│   │   ├── state_models.py # LangGraph State 定义 + 数据模型
-│   │   └── prompts.py      # 所有提示词集中管理
+│   │   ├── state_models.py
+│   │   └── prompts.py
 │   ├── agents/
-│   │   ├── orchestrator.py # LangGraph 工作流编排
-│   │   ├── search_agent.py # 搜索节点：关键词提取 + 摘要翻译
-│   │   ├── read_agent.py   # PDF 下载 + GROBID 章节提取
-│   │   ├── analyze_agent.py# 结构化提取
-│   │   ├── write_agent.py  # 报告生成 + Ollama 翻译
-│   │   └── openalex_search.py # OpenAlex API 封装
+│   │   ├── orchestrator.py
+│   │   ├── search_agent.py
+│   │   ├── read_agent.py
+│   │   ├── analyze_agent.py
+│   │   ├── write_agent.py
+│   │   └── openalex_search.py
 │   └── services/
-│       └── db.py           # SQLite 历史记录服务
-├── frontend/               # Vue 3 前端
-│   └── src/
-│       ├── views/Home.vue  # 首页（三栏布局 + 历史记录浮窗）
-│       ├── stores/research.js # Pinia 状态管理 + SSE 解析 + 多用户支持
-│       └── components/     # 搜索栏、状态栏、论文卡片、报告视图
-├── output/                 # 每次调研自动存档
-└── history.db              # SQLite 历史记录数据库
+│       └── db.py
+├── frontend/
+├── output/
+└── history.db
 ```
 
-## 📝 每次调研输出
+---
 
-```
-output/20260509_124034_帮我搜索3篇近几年关/
-├── original_sections/      # 提取的 PDF 原文
-│   ├── 01_xxx.txt
-│   └── 02_xxx.txt
-├── search_results.json     # 搜索到的论文元数据
-├── extracted_data.json     # 大模型结构化提取结果
-└── final_report.md         # 最终调研报告（中英双语）
+# 📄 调研输出示例
+
+```text
+output/
+└── 20260509_xxx/
+    ├── original_sections/
+    ├── search_results.json
+    ├── extracted_data.json
+    └── final_report.md
 ```
 
-## 🙏 致谢
+每次调研会自动保存：
 
-- [OpenAlex](https://openalex.org/) — 免费开放的学术论文索引
-- [GROBID](https://grobid.readthedocs.io/) — 机器学习驱动的 PDF 解析
-- [LangGraph](https://langchain-ai.github.io/langgraph/) — 多智能体工作流框架
-- [Ollama](https://ollama.com/) — 本地大模型部署
-- [Tailwind CSS](https://tailwindcss.com/) — 实用优先的 CSS 框架
-```
+- 原始论文章节
+- 搜索结果元数据
+- 结构化提取结果
+- 最终中英双语报告
+
+---
+
+
+# 🙏 致谢
+
+- [OpenAlex](https://openalex.org/)
+- [LangGraph](https://langchain-ai.github.io/langgraph/)
+- [GROBID](https://grobid.readthedocs.io/)
+- [Ollama](https://ollama.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+---
